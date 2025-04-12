@@ -1,0 +1,128 @@
+#include <iostream>
+using namespace std;
+
+// Function to print the array via pointers (limited to first 10 elements)
+void printArray(int* arr[], int size) {
+    for (int i = 0; i < size && i < 10; i++) {
+        cout << *arr[i] << " ";
+    }
+    cout << endl;
+}
+
+// Bubble Sort using pointers
+void bubbleSort(int* arr[], int size) {
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (*arr[j] > *arr[j + 1]) {
+                int* temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+// Quick Sort using pointers
+int partition(int* arr[], int low, int high) {
+    int pivot = *arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++) {
+        if (*arr[j] <= pivot) {
+            i++;
+            int* temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    int* temp = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp;
+    return i + 1;
+}
+
+void quickSort(int* arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+// Merge Sort using pointers
+void merge(int* arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    int* L[1000]; // Fixed-size array (assumes size <= 1000)
+    int* R[1000];
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (*L[i] <= *R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(int* arr[], int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+int main() {
+    const int SIZE = 11; // Small size for simplicity
+    int data[SIZE] = {10, 20, 9, 2,5, 5, 6, 30, 8, 4, 7};
+    int* pointers[SIZE];
+    int* pointersBubble[SIZE];
+    int* pointersQuick[SIZE];
+    int* pointersMerge[SIZE];
+
+    // Initialize pointers
+    for (int i = 0; i < SIZE; i++) {
+        pointers[i] = &data[i];
+        pointersBubble[i] = &data[i];
+        pointersQuick[i] = &data[i];
+        pointersMerge[i] = &data[i];
+    }
+
+    cout << "Original array: ";
+    printArray(pointers, SIZE);
+
+    // Bubble Sort
+    bubbleSort(pointersBubble, SIZE);
+    cout << "Bubble Sort: ";
+    printArray(pointersBubble, SIZE);
+
+    // Quick Sort
+    quickSort(pointersQuick, 0, SIZE - 1);
+    cout << "Quick Sort: ";
+    printArray(pointersQuick, SIZE);
+
+    // Merge Sort
+    mergeSort(pointersMerge, 0, SIZE - 1);
+    cout << "Merge Sort: ";
+    printArray(pointersMerge, SIZE);
+
+    return 0;
+}
